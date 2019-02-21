@@ -15,14 +15,16 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AppVerManager {
     Context context;
+    CompositeDisposable disposable;
     public AppVerManager(Context context) {
         this.context = context;
+        disposable= new CompositeDisposable();
     }
 
     public void add(final AppVersion mAppVersion) {
        ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
-
+        disposable.add(
                 apiService.addVersion(mAppVersion)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -55,7 +57,7 @@ public class AppVerManager {
                             public void onError(Throwable e) {
                                 Dialogs.showShortToast(context,"LOG VERSION"+ e.getMessage() );
                             }
-                        });
+                        }));
     }
 
 }
